@@ -101,3 +101,19 @@ void Chunk::setLocation(Vector2f loc)
 	Location = loc;
 	regenerateVertexArray();
 }
+
+void Chunk::setTileType(int x, int y, ETileType::Type type)
+{
+	if (x < ChunkSize && y < ChunkSize && x >= 0 && y >= 0)
+	{
+		if (Tiles[x][y].Type != type)
+		{
+			Tiles[x][y].Type = type;
+			regenerateVertexArray();
+		}
+	}
+	else
+	{
+		std::cout << " invalid coordinates "<< std::endl;
+	}
+}

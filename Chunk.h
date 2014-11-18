@@ -25,6 +25,15 @@ public:
 	virtual void generateTiles();
 	virtual void regenerateVertexArray();
 	virtual void setLocation(Vector2f loc);
+	virtual Vector2f getLocation(){ return Location; }
+	virtual void setTileType(int x, int y, ETileType::Type type);
+	
+
+	//for physics
+	float Top()   { return Location.y;                       }
+	float Bottom(){ return Location.y + ChunkSize *TileSize; }
+	float Left()  { return Location.x;                       }
+	float Right() { return Location.x + ChunkSize *TileSize; }
 private:
 
 	Vector2f Location;
