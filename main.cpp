@@ -24,7 +24,7 @@ int main()
 	shape.setFillColor(sf::Color::Green);
 
 	sf::View view(sf::FloatRect(0, 0, 1000, 600));
-	
+	//window.setFramerateLimit(144);
 	while (window.isOpen())
 	{
 		sf::Event event;
@@ -55,9 +55,15 @@ int main()
 			}			
 		}
 
+		sf::Vector2i Mousepos = sf::Mouse::getPosition(window);
+		Vector2f mouseloc(Mousepos.x, Mousepos.y);
+		mouseloc += view.getCenter()-view.getSize()/2.f;
+	
+
+		//std::cout << "x: " << mouseloc.x << " y: " << mouseloc.y << std::endl;
 		if (sf::Mouse::isButtonPressed(Mouse::Left))
 		{
-			Vector2f mouseloc(Mouse::getPosition(window).x, Mouse::getPosition(window).y);
+		
 
 			Chunk * chosenchunk = nullptr;
 			for (auto chunk : chunks)
@@ -74,8 +80,6 @@ int main()
 					}
 				}
 			}
-
-
 			if (chosenchunk)
 			{
 				float realx = mouseloc.x - chosenchunk->getLocation().x;
@@ -87,43 +91,11 @@ int main()
 				//std::cout << "x: " << finalx << " y: " << finaly << std::endl;
 			}
 		}
-		else if (sf::Mouse::isButtonPressed(Mouse::Right))
-		{
-			Vector2f mouseloc(Mouse::getPosition(window).x, Mouse::getPosition(window).y);
+		
+		shape.setPosition(mouseloc);
+		//Vector2f mouseloc(Mouse::getPosition(window).x, Mouse::getPosition(window).y);
 
-			Chunk * chosenchunk = nullptr;
-			for (auto chunk : chunks)
-			{
-				//y axis
-				if (chunk->Top() < mouseloc.y && chunk->Bottom() > mouseloc.y)
-				{
-					// x axis
-					if (chunk->Left() < mouseloc.x && chunk->Right() > mouseloc.x)
-					{
-
-						chosenchunk = chunk;
-						break;
-					}
-				}
-			}
-
-
-			if (chosenchunk)
-			{
-				float realx = mouseloc.x - chosenchunk->getLocation().x;
-				float realy = mouseloc.y - chosenchunk->getLocation().y;
-
-				int finalx = (realx / TileSize);
-				int finaly = (realy / TileSize);
-				chosenchunk->setTileType(finalx, finaly, ETileType::Dirt);
-				//std::cout << "x: " << finalx << " y: " << finaly << std::endl;
-			}
-		}
-		Vector2f mouseloc(Mouse::getPosition(window).x, Mouse::getPosition(window).y);
-
-
-
-		shape.setPosition(Mouse::getPosition(window).x, Mouse::getPosition(window).y);
+		//shape.setPosition(Mouse::getPosition(window).x, Mouse::getPosition(window).y);
 
 		window.setView(view);
 		window.clear();
@@ -133,7 +105,7 @@ int main()
 			window.draw(*chunk);
 		}
 		//window.draw(selectionrect);
-		//window.draw(shape);
+		window.draw(shape);
 		window.display();
 	}
 
