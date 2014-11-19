@@ -104,7 +104,7 @@ void GameWorld::checkChunkBounds(Vector2f topleft, Vector2f botright)
 			{
 				thechunk->save();
 				thechunk->clear();
-				thechunk->load(leftChunk - 1, i, false);
+				thechunk->load(leftChunk - 1, i, true);
 				moved = true;
 			}
 		}
@@ -134,7 +134,7 @@ void GameWorld::checkChunkBounds(Vector2f topleft, Vector2f botright)
 			{
 				thechunk->save();
 				thechunk->clear();
-				thechunk->load(rightChunk+  1, i, false);
+				thechunk->load(rightChunk+  1, i, true);
 				moved = true;
 			}
 		}

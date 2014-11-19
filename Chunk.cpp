@@ -1,12 +1,13 @@
 #include "Chunk.h"
 #include "SFML/Graphics/RenderTarget.hpp"
 #include <iostream>
-#include "simplex.hpp"
+
 #include <fstream>
 #include <string>
 #include <sstream>
 #include "ResourceManager.h"
-
+#include "noise/noise.h"
+#include <cmath>
 using namespace std;
 void Chunk::draw(RenderTarget& target, RenderStates states) const
 {
@@ -16,23 +17,52 @@ void Chunk::draw(RenderTarget& target, RenderStates states) const
 
 void Chunk::generateTiles()
 {
-	Simplex simplex;
-	simplex.init();
+	//uwotm8
+	noise::module::Perlin PerlinNoise = noise::module::Perlin::Perlin();
+
+	//PerlinNoise.SetSeed(0);
+	PerlinNoise.SetOctaveCount(2);
+	//PerlinNoise.SetFrequency(10);
+	double value = PerlinNoise.GetValue(1.25, 0.75, 0.50);
+	
 	for (int x = 0; x< ChunkSize; x++)
 	{
+		bool TopLayer = false;
 		for (int y = 0; y < ChunkSize; y++)
 		{
-			float Xnoise = x + Location.x/10;// / (TileSize*ChunkSize);
-			float Ynoise = y + Location.y/10;// / (TileSize*ChunkSize);
-			float Density = simplex.noise(Xnoise, Ynoise);//+ Location.x/(TileSize*ChunkSize), y*TileSize + Location.y);
-			//std::cout << Density << "-" << Xnoise << "-" << Ynoise << std::endl;
-			Density += (Ynoise*0.2)-2;
+			float Xnoise = x + Location.x/TileSize;
+			float Ynoise = y + Location.y/TileSize;
 
+			//this shit creates mountains
+			float Density = PerlinNoise.GetValue(Xnoise/10, Ynoise/10, 0);			
+			Density += (Ynoise/5)-1.5;
+		
+			if (Density > 1)
+			{
+				Density = 1;
+				//add holes as caves
+
+				float val = PerlinNoise.GetValue(Xnoise / 10, Ynoise / 10, 3.4);
+				//val -= Density/10;
+				if (val > 0.5)
+				{
+				Density = 0;
+				}
+				else
+				{
+					Density -= val;
+				}
+			//	Density -= val*1.2;
+			}
+			
+
+
+			//std::cout << Density << "-" << Xnoise << "-" << Ynoise << std::endl;
 			if (Density> 0.7)
 			{
 				Tiles[x][y].Type = ETileType::Stone;
 			}
-			else if (Density > 0.3)
+			else if (Density > 0.1)
 			{
 				Tiles[x][y].Type = ETileType::Dirt;
 			}
@@ -44,20 +74,7 @@ void Chunk::generateTiles()
 		}
 	}
 
-	//grass on the top layer
-	/*for (int x = 0; x < ChunkSize; x++)
-	{
-
-		for (int y = 0; y < ChunkSize; y++)
-		{ 
-			if (Tiles[x][y].Type != ETileType::Air)
-			{
-				Tiles[x][y].Type = ETileType::Grass;
-				break;
-			}
-		}
-	}*/
-
+	
 	regenerateVertexArray();
 }
 
