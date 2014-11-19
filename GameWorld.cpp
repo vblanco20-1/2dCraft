@@ -30,7 +30,7 @@ void GameWorld::createChunks(int sizex, int sizey)
 		for (int j = 0; j < sizey; j++)
 		{
 			Chunk *newChunk = new Chunk();			
-			newChunk->load(i, j);
+			newChunk->load(i, j, true);
 			//newChunk->generateTiles();
 			Chunks.push_back(newChunk);
 		}
@@ -104,7 +104,7 @@ void GameWorld::checkChunkBounds(Vector2f topleft, Vector2f botright)
 			{
 				thechunk->save();
 				thechunk->clear();
-				thechunk->load(leftChunk - 1, i);
+				thechunk->load(leftChunk - 1, i, false);
 				moved = true;
 			}
 		}
@@ -134,7 +134,7 @@ void GameWorld::checkChunkBounds(Vector2f topleft, Vector2f botright)
 			{
 				thechunk->save();
 				thechunk->clear();
-				thechunk->load(rightChunk+  1, i);
+				thechunk->load(rightChunk+  1, i, false);
 				moved = true;
 			}
 		}

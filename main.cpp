@@ -35,7 +35,7 @@ int main()
 	
 		World.checkChunkBounds(view.getCenter() - Vector2f(500, 300), view.getCenter() + Vector2f(500, 300));
 		window.setView(view);
-		window.clear();
+		window.clear(Color(95, 184, 213));
 		
 		window.draw(World);
 		

@@ -5,10 +5,12 @@
 #include <fstream>
 #include <string>
 #include <sstream>
+#include "ResourceManager.h"
 
 using namespace std;
 void Chunk::draw(RenderTarget& target, RenderStates states) const
 {
+	states.texture = TileMap;
 	target.draw(Vertices, states);
 }
 
@@ -41,11 +43,29 @@ void Chunk::generateTiles()
 			//Tiles[x][y].Type = ETileType::Type((x*y) % 3);
 		}
 	}
+
+	//grass on the top layer
+	/*for (int x = 0; x < ChunkSize; x++)
+	{
+
+		for (int y = 0; y < ChunkSize; y++)
+		{ 
+			if (Tiles[x][y].Type != ETileType::Air)
+			{
+				Tiles[x][y].Type = ETileType::Grass;
+				break;
+			}
+		}
+	}*/
+
 	regenerateVertexArray();
 }
 
 void Chunk::regenerateVertexArray()
 {
+
+	TileMap = ResourceManager::GetInstance()->GetTexture( "Resources/Tiles.png");
+
 	Vertices.resize(ChunkSize*ChunkSize * 4);
 	Vertices.setPrimitiveType(PrimitiveType::Quads);
 	
@@ -72,31 +92,58 @@ void Chunk::regenerateVertexArray()
 			D += Location;
 
 			Color VertColor;
+
+			//texture coords
+			Vector2f tA, tB, tC, tD;
+
 			switch (Tiles[x][y].Type)
 			{
 			case ETileType::Air:
-				VertColor = Color::Cyan;
+				//VertColor = Color::Cyan;
+				tA = Vector2f(0, 32);
+				tB = Vector2f(32, 32);
+				tC = Vector2f(32, 64);
+				tD = Vector2f(0, 64);
+
 				break;
 			case ETileType::Dirt:
-				VertColor.r = 133;
-				VertColor.g = 65;
-				VertColor.b = 35;
+				//VertColor.r = 133;
+				//VertColor.g = 65;
+				//VertColor.b = 35;
+
+				tA = Vector2f(0, 0);
+				tB = Vector2f(32, 0);
+				tC = Vector2f(32, 32);
+				tD = Vector2f(0, 32);
 				break;
 			case ETileType::Stone:
-				VertColor.r = 100;
-				VertColor.g = 100;
-				VertColor.b = 100;
+				//VertColor.r = 100;
+				//VertColor.g = 100;
+				//VertColor.b = 100;
+
+				tA = Vector2f(32, 0);
+				tB = Vector2f(64, 0);
+				tC = Vector2f(64, 32);
+				tD = Vector2f(32, 32);
+				break;
+
+
+			case ETileType::Grass:
+				tA = Vector2f(32, 32);
+				tB = Vector2f(64, 32);
+				tC = Vector2f(64, 64);
+				tD = Vector2f(32, 64);
 				break;
 			default:
 				VertColor = Color::Red;
 			}
-
+		//	VertColor = Color::White;
 			sf::Vertex* quad = &Vertices[(y + x * ChunkSize) * 4];
 
-			quad[0] = Vertex(A, VertColor);
-			quad[1] = Vertex(B, VertColor);
-			quad[2] = Vertex(D, VertColor);
-			quad[3] = Vertex(C, VertColor);			
+			quad[0] = Vertex(A,tA);
+			quad[1] = Vertex(B,tB);
+			quad[2] = Vertex(D, tC);
+			quad[3] = Vertex(C,tD);
 		}
 	}	
 }
@@ -123,39 +170,47 @@ void Chunk::setTileType(int x, int y, ETileType::Type type)
 	}
 }
 
-bool Chunk::load(int x, int y)
+bool Chunk::load(int x, int y, bool bForceRebuild)
 {
 
 	setChunkLoc(x, y);
-	stringstream ss;
 
-	ss << "Saves/chunk" << x << "-" << y << ".cnk";
-	string filename = ss.str();
-
-	ifstream file;
-	file.open(filename);
-
-	if (file.is_open())
+	if (!bForceRebuild)
 	{
-		for (int x = 0; x < ChunkSize; x++)
-		{
-			for (int y = 0; y < ChunkSize; y++)
-			{
-				int type;
-				file >> type;
-				Tiles[x][y].Type = ETileType::Type(type);
-			}
-			//file << endl;
-		}
+		stringstream ss;
 
-		regenerateVertexArray();
+		ss << "Saves/chunk" << x << "-" << y << ".cnk";
+		string filename = ss.str();
+
+		ifstream file;
+		file.open(filename);
+
+		if (file.is_open())
+		{
+			for (int x = 0; x < ChunkSize; x++)
+			{
+				for (int y = 0; y < ChunkSize; y++)
+				{
+					int type;
+					file >> type;
+					Tiles[x][y].Type = ETileType::Type(type);
+				}
+				//file << endl;
+			}
+
+			regenerateVertexArray();
+		}
+		else
+		{
+			generateTiles();
+		}
 	}
 	else
 	{
 		generateTiles();
 	}
 
-	setChunkLoc(x, y);
+	//setChunkLoc(x, y);
 	return true;
 }
 

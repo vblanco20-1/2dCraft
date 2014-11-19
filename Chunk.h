@@ -9,7 +9,7 @@ namespace ETileType
 {
 	enum Type
 	{
-		Air, Stone, Dirt
+		Air, Stone, Dirt,Grass
 	};
 }
 
@@ -29,14 +29,10 @@ public:
 	virtual void generateTiles();
 	// reload the vertex array for drawing
 	virtual void regenerateVertexArray();
-
-
-	
-
 	
 	
 	//try to load from a file
-	virtual bool load(int x, int y);
+	virtual bool load(int x, int y, bool bForceRebuild);
 
 	//save the chunk to a file
 	virtual void save();
@@ -58,6 +54,8 @@ public:
 	float Left()  { return Location.x;                       }
 	float Right() { return Location.x + ChunkSize *TileSize; }
 private:
+
+	Texture *TileMap;
 	//coordinate in the chunk array(for save and load)
 	Vector2i ChunkLoc;
 	//coordinate in world space for rendering
