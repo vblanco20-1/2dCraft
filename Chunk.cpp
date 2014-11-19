@@ -2,6 +2,11 @@
 #include "SFML/Graphics/RenderTarget.hpp"
 #include <iostream>
 #include "simplex.hpp"
+#include <fstream>
+#include <string>
+#include <sstream>
+
+using namespace std;
 void Chunk::draw(RenderTarget& target, RenderStates states) const
 {
 	target.draw(Vertices, states);
@@ -96,11 +101,11 @@ void Chunk::regenerateVertexArray()
 	}	
 }
 
-void Chunk::setLocation(Vector2f loc)
-{
-	Location = loc;
-	regenerateVertexArray();
-}
+//void Chunk::setLocation(Vector2f loc)
+//{
+//	Location = loc;
+//	regenerateVertexArray();
+//}
 
 void Chunk::setTileType(int x, int y, ETileType::Type type)
 {
@@ -116,4 +121,86 @@ void Chunk::setTileType(int x, int y, ETileType::Type type)
 	{
 		std::cout << " invalid coordinates "<< std::endl;
 	}
+}
+
+bool Chunk::load(int x, int y)
+{
+
+	setChunkLoc(x, y);
+	stringstream ss;
+
+	ss << "Saves/chunk" << x << "-" << y << ".cnk";
+	string filename = ss.str();
+
+	ifstream file;
+	file.open(filename);
+
+	if (file.is_open())
+	{
+		for (int x = 0; x < ChunkSize; x++)
+		{
+			for (int y = 0; y < ChunkSize; y++)
+			{
+				int type;
+				file >> type;
+				Tiles[x][y].Type = ETileType::Type(type);
+			}
+			//file << endl;
+		}
+
+		regenerateVertexArray();
+	}
+	else
+	{
+		generateTiles();
+	}
+
+	setChunkLoc(x, y);
+	return true;
+}
+
+void Chunk::save()
+{
+	stringstream ss;
+
+	ss << "Saves/chunk" << ChunkLoc.x << "-" << ChunkLoc.y << ".cnk";
+	string filename = ss.str();
+
+	ofstream file;
+	file.open(filename);
+	if (file.is_open())
+	{
+		for (int x = 0; x < ChunkSize; x++)
+		{
+			for (int y = 0; y < ChunkSize; y++)
+			{
+				file << Tiles[x][y].Type << " ";
+			}
+			file << endl;
+		}
+	}
+	file.close();
+}
+
+void Chunk::clear()
+{
+	for (int x = 0; x < ChunkSize; x++)
+	{
+		for (int y = 0; y < ChunkSize; y++)
+		{
+			Tiles[x][y].Type = ETileType::Air;
+		}
+	}
+
+	setChunkLoc(0, 0);
+}
+
+void Chunk::setChunkLoc(int x, int y)
+{
+	ChunkLoc.x = x; ChunkLoc.y = y;
+
+	Location.x = x*ChunkSize*TileSize;
+	Location.y = y*ChunkSize*TileSize;
+
+	regenerateVertexArray();
 }

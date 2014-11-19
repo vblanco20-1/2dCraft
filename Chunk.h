@@ -22,13 +22,35 @@ struct Tile
 class Chunk : public Drawable
 {
 public:
+
 	virtual void draw(RenderTarget& target, RenderStates states) const;
+
+	//use random generation to create the tiles
 	virtual void generateTiles();
+	// reload the vertex array for drawing
 	virtual void regenerateVertexArray();
-	virtual void setLocation(Vector2f loc);
+
+
+	
+
+	
+	
+	//try to load from a file
+	virtual bool load(int x, int y);
+
+	//save the chunk to a file
+	virtual void save();
+
+	//clear the chunk
+	virtual void clear();
+
+
+	//virtual void setLocation(Vector2f loc);
 	virtual Vector2f getLocation(){ return Location; }
 	virtual void setTileType(int x, int y, ETileType::Type type);
-	
+
+	virtual void setChunkLoc(int x, int y);;
+	virtual Vector2i getChunkLoc(){ return ChunkLoc; };
 
 	//for physics
 	float Top()   { return Location.y;                       }
@@ -36,7 +58,9 @@ public:
 	float Left()  { return Location.x;                       }
 	float Right() { return Location.x + ChunkSize *TileSize; }
 private:
-
+	//coordinate in the chunk array(for save and load)
+	Vector2i ChunkLoc;
+	//coordinate in world space for rendering
 	Vector2f Location;
 	
 	Tile Tiles[ChunkSize][ChunkSize];

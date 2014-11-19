@@ -3,6 +3,6 @@
 class GameObject
 {
 public:
-	virtual void Update(float DeltaTime) = 0;
+	virtual void update(float DeltaTime) = 0;
 
 };
