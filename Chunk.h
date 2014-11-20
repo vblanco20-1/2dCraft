@@ -9,7 +9,7 @@ namespace ETileType
 {
 	enum Type
 	{
-		Air, Stone, Dirt,Grass
+		Air, Stone, Dirt,Grass, null
 	};
 }
 
@@ -44,6 +44,8 @@ public:
 	//virtual void setLocation(Vector2f loc);
 	virtual Vector2f getLocation(){ return Location; }
 	virtual void setTileType(int x, int y, ETileType::Type type);
+	virtual ETileType::Type getTileType(int x, int y);
+
 
 	virtual void setChunkLoc(int x, int y);;
 	virtual Vector2i getChunkLoc(){ return ChunkLoc; };

@@ -40,10 +40,9 @@ void Chunk::generateTiles()
 			if (Density > 1)
 			{
 				Density = 1;
-				//add holes as caves
 
-				float val = PerlinNoise.GetValue(Xnoise / 10, Ynoise / 10, 3.4);
-				//val -= Density/10;
+				//add holes as caves
+				float val = PerlinNoise.GetValue(Xnoise / 10, Ynoise / 10, 3.4);				
 				if (val > 0.5)
 				{
 				Density = 0;
@@ -51,8 +50,7 @@ void Chunk::generateTiles()
 				else
 				{
 					Density -= val;
-				}
-			//	Density -= val*1.2;
+				}			
 			}
 			
 
@@ -275,4 +273,14 @@ void Chunk::setChunkLoc(int x, int y)
 	Location.y = y*ChunkSize*TileSize;
 
 	regenerateVertexArray();
+}
+
+ETileType::Type Chunk::getTileType(int x, int y)
+{
+	if (x < ChunkSize && y < ChunkSize && x >= 0 && y >= 0)
+	{
+		return Tiles[x][y].Type;
+	}
+
+	return ETileType::null;
 }

@@ -22,7 +22,7 @@ int main()
 
 	PlayerController Controller = PlayerController(&World, &window, &view);
 	window.setFramerateLimit(60);
-	double frametime = 1 / 60;
+	double frametime = 1.f / 60.f;
 	while (window.isOpen())
 	{
 		sf::Event event;
@@ -32,13 +32,16 @@ int main()
 		}
 
 		Controller.ProcessInput(frametime);		
-	
+		
 		World.checkChunkBounds(view.getCenter() - Vector2f(500, 300), view.getCenter() + Vector2f(500, 300));
 		window.setView(view);
 		window.clear(Color(95, 184, 213));
 		
 		window.draw(World);
-		
+		if (Controller.myCreature != nullptr)
+		{
+			window.draw(*Controller.myCreature);
+		}
 		
 		window.display();
 	}
