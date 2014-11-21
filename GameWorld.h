@@ -16,9 +16,12 @@ public:
 
 	virtual void createChunks(int sizex, int sizey);
 
-	virtual Chunk* getChunk(Vector2f position);
-	virtual Chunk* getChunkFromCoords(int x, int y);
+	virtual Chunk* getChunk(Vector2f position) const ;
+	virtual Chunk* getChunkFromCoords(int x, int y) const;
 	virtual bool saveChunks();
+
+
+	
 
 private:
 

@@ -1,5 +1,6 @@
 #include "GameWorld.h"
 #include "GameObject.h"
+#include "DebugDraw.h"
 void GameWorld::draw(RenderTarget& target, RenderStates states) const
 {
 	//draw the tiles
@@ -7,6 +8,9 @@ void GameWorld::draw(RenderTarget& target, RenderStates states) const
 	{
 		target.draw(*chunk);
 	}
+
+	target.draw(*DebugDraw::GetInstance());
+	DebugDraw::GetInstance()->clearArray();
 }
 
 void GameWorld::update(float DeltaTime)
@@ -15,6 +19,7 @@ void GameWorld::update(float DeltaTime)
 	{
 		object->update(DeltaTime);
 	}
+	
 }
 
 void GameWorld::createChunks(int sizex, int sizey)
@@ -30,7 +35,7 @@ void GameWorld::createChunks(int sizex, int sizey)
 		for (int j = 0; j < sizey; j++)
 		{
 			Chunk *newChunk = new Chunk();			
-			newChunk->load(i, j);
+			newChunk->load(i, j, true);
 			//newChunk->generateTiles();
 			Chunks.push_back(newChunk);
 		}
@@ -40,7 +45,7 @@ void GameWorld::createChunks(int sizex, int sizey)
 	TerrainCenter.y = (sizey*ChunkSize*TileSize) / 2;
 }
 
-Chunk* GameWorld::getChunk(Vector2f position)
+Chunk* GameWorld::getChunk(Vector2f position)const
 {
 	Chunk * chosenchunk = nullptr;
 	for (auto chunk : Chunks)
@@ -60,7 +65,7 @@ Chunk* GameWorld::getChunk(Vector2f position)
 	}
 	return chosenchunk;
 }
-Chunk* GameWorld::getChunkFromCoords(int x, int y)
+Chunk* GameWorld::getChunkFromCoords(int x, int y)const
 {
 	Chunk * chosenchunk = nullptr;
 
@@ -104,7 +109,7 @@ void GameWorld::checkChunkBounds(Vector2f topleft, Vector2f botright)
 			{
 				thechunk->save();
 				thechunk->clear();
-				thechunk->load(leftChunk - 1, i);
+				thechunk->load(leftChunk - 1, i, true);
 				moved = true;
 			}
 		}
@@ -134,7 +139,7 @@ void GameWorld::checkChunkBounds(Vector2f topleft, Vector2f botright)
 			{
 				thechunk->save();
 				thechunk->clear();
-				thechunk->load(rightChunk+  1, i);
+				thechunk->load(rightChunk+  1, i, true);
 				moved = true;
 			}
 		}
